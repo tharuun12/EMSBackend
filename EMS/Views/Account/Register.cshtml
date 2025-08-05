@@ -1,0 +1,78 @@
+﻿@using EMS.ViewModels
+@model RegisterViewModel
+
+@{
+    ViewData["Title"] = "Register";
+}
+
+<div class="register-container">
+    <h2 class="register-title">Create Account</h2>
+
+    <form asp-action="Register" method="post" class="register-form">
+        <div asp-validation-summary="All" class="register-validation-summary"></div>
+
+        <div class="register-group">
+            <label class="register-label">Email</label>
+            <input asp-for="Email" class="register-input" />
+            <span asp-validation-for="Email" class="register-error"></span>
+        </div>
+
+        <input type="hidden" asp-for="PhoneNumber" class="register-input" />
+        <input type="hidden" asp-for="FullName" class="register-input" />
+
+        <div class="login-group">
+            <label class="login-label">Password</label>
+            <div class="password-input-container">
+                <input asp-for="Password" type="password" class="login-input" id="registerPasswordField" />
+                <button type="button" class="password-toggle-btn" onclick="toggleRegisterPasswordVisibility()">
+                    <i class="fas fa-eye-slash" id="registerPasswordToggleIcon"></i>
+                </button>
+            </div>
+            <span asp-validation-for="Password" class="login-error"></span>
+        </div>
+
+        <div class="login-group">
+            <label class="login-label">Confirm Password</label>
+            <div class="password-input-container">
+                <input asp-for="ConfirmPassword" type="password" class="login-input" id="confirmPasswordField" />
+                <button type="button" class="password-toggle-btn" onclick="toggleConfirmPasswordVisibility()">
+                    <i class="fas fa-eye-slash" id="confirmPasswordToggleIcon"></i>
+                </button>
+            </div>
+            <span asp-validation-for="ConfirmPassword" class="login-error"></span>
+        </div>
+
+
+        <div class="register-actions">
+            <button type="submit" class="register-button">Register</button>
+        </div>
+        <div class="login-remember-forgot1">
+            <p >Already have an account? <a asp-action="Login" class="login-forgot-link1">Login</a></p>
+        </div>
+    </form>
+</div>
+<script>
+    function toggleRegisterPasswordVisibility() {
+        const field = document.getElementById("registerPasswordField");
+        const icon = document.getElementById("registerPasswordToggleIcon");
+        toggleVisibility(field, icon);
+    }
+
+    function toggleConfirmPasswordVisibility() {
+        const field = document.getElementById("confirmPasswordField");
+        const icon = document.getElementById("confirmPasswordToggleIcon");
+        toggleVisibility(field, icon);
+    }
+
+    function toggleVisibility(field, icon) {
+        if (field.type === "password") {
+            field.type = "text";
+            icon.classList.remove("fa-eye-slash");
+            icon.classList.add("fa-eye");
+        } else {
+            field.type = "password";
+            icon.classList.remove("fa-eye");
+            icon.classList.add("fa-eye-slash");
+        }
+    }
+</script>

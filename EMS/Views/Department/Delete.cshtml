@@ -1,0 +1,11 @@
+﻿@model EMS.Models.Department
+
+<h2>Delete Department</h2>
+
+<p>Are you sure you want to delete <strong>@Model.DepartmentName</strong>?</p>
+
+<form asp-action="Delete" method="post">
+    <input type="hidden" asp-for="DepartmentId" />
+    <button type="submit" class="btn btn-danger">Yes, Delete</button>
+    <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+</form>

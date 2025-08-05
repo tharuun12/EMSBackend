@@ -1,0 +1,34 @@
+﻿.toast-message {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    padding: 12px 24px;
+    border-radius: 8px;
+    z-index: 9999;
+    font-weight: bold;
+    color: white;
+    animation: slidein 0.3s ease-in;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.15);
+}
+
+/* Error Message - Red */
+.toast-message.error {
+    background: #dc3545;
+}
+
+/* Success Message - Green */
+.toast-message.success {
+    background: #28a745;
+}
+
+@keyframes slidein {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

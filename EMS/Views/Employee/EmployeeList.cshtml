@@ -1,0 +1,59 @@
+﻿@model IEnumerable<EMS.Models.Employee>
+
+@{
+    ViewData["Title"] = "Employees";
+}
+
+<div class="data-section">
+    <h2 class="data-title">Employees</h2>
+
+    <div class="d-flex justify-content-end mb-3">
+        <a class="btn btn-primary" asp-action="Create">Add New Employee</a>
+    </div>
+
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Phone</th>
+                <th>Status</th>
+                <th>Role</th>
+                <th>Department</th>
+                <th>Leave Balance</th>
+                <th>Edit</th>
+                <th>Delete</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var e in Model)
+            {
+                <tr>
+                    <td>@e.FullName</td>
+                    <td>@e.Email</td>
+                    <td>@e.PhoneNumber</td>
+                    <td>
+                        <span class="data-status @(e.IsActive ? "approved" : "rejected")">
+                            @(e.IsActive ? "Active" : "Inactive")
+                        </span>
+                    </td>
+                    <td>@e.Role</td>
+                    <td>@e.Department?.DepartmentName</td>
+                    <td>@e.LeaveBalance</td>
+                    <td>
+                        <a class="btn btn-warning btn-sm me-1 d-inline-block" asp-action="Edit" asp-route-id="@e.EmployeeId">Edit</a>
+                        
+                    </td>
+                    <td>
+                        <a class="btn btn-danger btn-sm d-inline-block" asp-action="Delete" asp-route-id="@e.EmployeeId">Delete</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    @if (!Model.Any())
+    {
+        <div class="data-empty">No employee records available.</div>
+    }
+</div>

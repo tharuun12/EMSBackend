@@ -1,0 +1,38 @@
+﻿@model IEnumerable<EMS.Models.LeaveRequest>
+
+<div class="data-section">
+    <h2 class="data-title">My Leaves - @ViewBag.EmployeeName</h2>
+
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>Start</th>
+                <th>End</th>
+                <th>Reason</th>
+                <th>Status</th>
+                <th>Requested On</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var leave in Model)
+            {
+                <tr>
+                    <td>@leave.StartDate.ToShortDateString()</td>
+                    <td>@leave.EndDate.ToShortDateString()</td>
+                    <td>@leave.Reason</td>
+                    <td>
+                        <span class="data-status @(leave.Status.ToLower())">
+                            @leave.Status
+                        </span>
+                    </td>
+                    <td>@leave.RequestDate.ToShortDateString()</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    @if (!Model.Any())
+    {
+        <div class="data-empty">You don't have any approved or past leaves.</div>
+    }
+</div>

@@ -1,0 +1,54 @@
+﻿@model EMS.ViewModels.CurrentMonthEmployeeViewModel
+
+@{
+    ViewData["Title"] = "Current Month Information";
+}
+
+<div class="container mt-4">
+    <h2 class="text-center">@ViewData["Title"] - @Model.CurrentMonth</h2>
+
+    @if (Model.LeaveRequests.Any())
+    {
+        <div class="card">
+            <div class="text-black">
+                <h4>Leave Requests for @Model.CurrentMonth</h4>
+            </div>
+            <div class="card-body">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Start Date</th>
+                            <th>End Date</th>
+                            <th>Reason</th>
+                            <th>Status</th>
+                            <th>Request Date</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var leave in Model.LeaveRequests)
+                        {
+                            <tr>
+                                <td>@leave.StartDate.ToShortDateString()</td>
+                                <td>@leave.EndDate.ToShortDateString()</td>
+                                <td>@leave.Reason</td>
+                                <td>
+                                    <span class="badge @(leave.Status == "Approved" ? "bg-success" :
+                                                                                                   leave.Status == "Rejected" ? "bg-danger" : "bg-warning")">
+                                @leave.Status
+                            </span>
+                        </td>
+                        <td>@leave.RequestDate.ToShortDateString()</td>
+                    </tr>
+                                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-info">
+            No leave requests for the current month.
+        </div>
+    }
+</div>

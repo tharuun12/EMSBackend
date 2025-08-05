@@ -1,0 +1,47 @@
+﻿@model EMS.Models.LeaveRequest
+@{
+    var employee = ViewData["Employee"] as EMS.Models.Employee;
+}
+
+<h2 class="text-center">Apply for Leave</h2>
+
+<form asp-action="Apply" method="post" class="create-form">
+    <div class="form-group">
+        <label asp-for="EmployeeId">Employee Name</label>
+
+        <input type="hidden" asp-for="EmployeeId" value="@employee?.EmployeeId" />
+        <p class="form-control-plaintext"><strong>@employee?.FullName</strong></p>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="StartDate">Start Date</label>
+        <input asp-for="StartDate" class="form-control" type="date" min="@DateTime.Now.ToString("yyyy-MM-dd")" id="StartDate" />
+        <span asp-validation-for="StartDate" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="EndDate">End Date</label>
+        <input asp-for="EndDate" class="form-control" type="date" id="EndDate" />
+        <span asp-validation-for="EndDate" class="text-danger"></span>
+    </div>
+
+    @section Scripts {
+        <script>
+            document.getElementById('StartDate').addEventListener('change', function () {
+                const startDate = this.value;
+                const endDateInput = document.getElementById('EndDate');
+                endDateInput.min = startDate;
+            });
+        </script>
+    }
+
+
+    <div class="form-group">
+        <label asp-for="Reason"></label>
+        <textarea asp-for="Reason" class="form-control"></textarea>
+        <span asp-validation-for="Reason" class="text-danger"></span>
+    </div>
+    <br />
+
+    <button type="submit" class="btn btn-success">Submit Request</button>
+</form>

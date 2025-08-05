@@ -1,0 +1,11 @@
+﻿@model EMS.Models.Employee
+
+<h2>Delete Employee</h2>
+
+<p>Are you sure you want to delete <strong>@Model.FullName</strong>?</p>
+
+<form asp-action="Delete" method="post">
+    <input type="hidden" asp-for="EmployeeId" />
+    <button type="submit" class="btn btn-danger">Delete</button>
+    <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+</form>

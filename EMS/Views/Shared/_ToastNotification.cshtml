@@ -1,0 +1,37 @@
+﻿@if (TempData["ToastSuccess"] != null)
+{
+    <div class="toast-message success">
+        @TempData["ToastSuccess"]
+    </div>
+}
+
+@if (TempData["ToastError"] != null)
+{
+    <div class="toast-message error">
+        @TempData["ToastError"]
+    </div>
+}
+
+<style>
+    .toast-message {
+        transition: opacity 0.5s ease-out;
+    }
+    .toast-message.fade-out {
+        opacity: 0;
+    }
+</style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const toastMessages = document.querySelectorAll('.toast-message');
+
+        toastMessages.forEach(function(toast) {
+            setTimeout(function() {
+                toast.classList.add('fade-out');
+                setTimeout(function() {
+                    toast.remove();
+                }, 500);
+            }, 1000);
+        });
+    });
+</script>

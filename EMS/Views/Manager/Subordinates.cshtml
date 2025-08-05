@@ -1,0 +1,45 @@
+﻿@model IEnumerable<EMS.Models.Employee>
+
+@{
+    ViewData["Title"] = "My Team";
+}
+
+<div class="data-section">
+    <h2 class="data-title">Subordinates</h2>
+
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Phone</th>
+                <th>Status</th>
+                <th>Role</th>
+                <th>Leave Balance</th>
+               
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var e in Model)
+            {
+                <tr>
+                    <td>@e.FullName</td>
+                    <td>@e.Email</td>
+                    <td>@e.PhoneNumber</td>
+                    <td>
+                        <span class="data-status @(e.IsActive ? "approved" : "rejected")">
+                            @(e.IsActive ? "Active" : "Inactive")
+                        </span>
+                    </td>
+                    <td>@e.Role</td>
+                    <td>@e.LeaveBalance</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    @if (!Model.Any())
+    {
+        <div class="data-empty">No employee records available.</div>
+    }
+</div>

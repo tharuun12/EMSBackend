@@ -1,0 +1,157 @@
+﻿@{
+    ViewData["Title"] = "EMS Dashboard";
+    var recentEmployees = ViewBag.RecentEmployees as List<EMS.Models.Employee>;
+    var departmentStats = ViewBag.DepartmentStats as List<dynamic>;
+}
+@using EMS.ViewModels;
+@model List<DepartmentStatsViewModel>
+
+
+<h2 class="text-center mb-4">EMS Dashboard</h2>
+
+<div class="dashboard-cards">
+    <div class="card total">
+        <h3>Total Employees</h3>
+        <p>@ViewBag.TotalEmployees</p>
+    </div>
+    <div class="card active">
+        <h3>Active Employees</h3>
+        <p>@ViewBag.ActiveEmployees</p>
+    </div>
+    <div class="card departments">
+        <h3>Total Departments</h3>
+        <p>@ViewBag.TotalDepartments</p>
+    </div>
+</div>
+
+<div style="display: flex; gap: 30px; justify-content: center; flex-wrap: wrap;">
+    <div>
+        <canvas id="activeEmployeesChart" width="400" height="400" class="chart-canvas"></canvas>
+    </div>
+    <div>
+        <canvas id="summaryChart" width="400" height="400" class="chart-canvas"></canvas>
+    </div>
+</div>
+
+
+<h4 class="mt-5">🧑‍💼 Recent Employees</h4>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Phone</th>
+            <th>Designation</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var emp in recentEmployees)
+        {
+            <tr>
+                <td>@emp.FullName</td>
+                <td>@emp.Email</td>
+                <td>@emp.PhoneNumber</td>
+                <td>@emp.Role</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<h4 class="mt-5">🏢 Department-wise Employee Count</h4>
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Department</th>
+            <th>No. of Employees</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var stat in Model)
+        {
+            <tr>
+                <td>@stat.Name</td>
+                <td>@stat.EmployeeCount</td>
+            </tr>
+        }
+    </tbody>
+
+
+</table>
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script>
+        const ctx = document.getElementById('summaryChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Approved', 'Pending', 'Rejected'],
+                datasets: [{
+                    label: 'Leave Requests',
+                    data: [@ViewBag.ApprovedLeaves, @ViewBag.PendingLeaves, @ViewBag.RejectedLeaves],
+                    backgroundColor: [
+                        '#2ecc71', 
+                        '#f39c12', 
+                        '#e74c3c'  
+                    ],
+                    borderWidth: 3,
+                    borderColor: '#ffffff'
+                }]
+            },
+            options: {
+                responsive: true,
+                cutout: '50%',
+                plugins: {
+                    title: {
+                        display: true,
+                        text: 'Leave Request Status',
+                        font: { size: 16, weight: 'bold' }
+                    },
+                    legend: { 
+                        position: 'bottom',
+                        labels: { padding: 15 }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                const total = @ViewBag.TotalLeaveRequests;
+                                const percentage = ((context.raw / total) * 100).toFixed(1);
+                                return context.label + ': ' + context.raw + ' (' + percentage + '%)';
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+        const activeLabels = @Html.Raw(Json.Serialize(Model.Select(d => d.Name)));
+        const activeData = @Html.Raw(Json.Serialize(Model.Select(d => d.EmployeeCount)));
+
+        const ctxPie = document.getElementById('activeEmployeesChart').getContext('2d');
+        new Chart(ctxPie, {
+            type: 'pie',
+            data: {
+                labels: activeLabels,
+                datasets: [{
+                    label: 'Active Employees',
+                    data: activeData,
+                    backgroundColor: [
+                        '#4e79a7', '#f28e2c', '#e15759', '#76b7b2',
+                        '#59a14f', '#edc948', '#b07aa1', '#9c755f'
+                    ]
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: { position: 'bottom' },
+                    title: {
+                        display: true,
+                        text: 'Active Employee Department Wise',
+                        font: { size: 16, weight: 'bold' }
+                    }
+                }
+            }
+        });
+    </script>
+}

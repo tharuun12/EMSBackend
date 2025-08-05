@@ -1,0 +1,61 @@
+﻿@using EMS.ViewModels
+@model LoginViewModel
+
+@{
+    ViewData["Title"] = "Login";
+}
+
+<div class="login-container">
+    <h2 class="login-title">Welcome Back</h2>
+
+    <form asp-action="Login" method="post" class="login-form">
+        <div asp-validation-summary="All" class="login-validation-summary"></div>
+
+        <div class="login-group">
+            <label class="login-label">Email</label>
+            <input asp-for="Email" class="login-input" />
+            <span asp-validation-for="Email" class="login-error"></span>
+        </div>
+
+        <div class="login-group">
+            <label class="login-label">Password</label>
+            <div class="password-input-container">
+                <input asp-for="Password" type="password" class="login-input" id="passwordField" />
+                <button type="button" class="password-toggle-btn" onclick="togglePasswordVisibility()">
+                    <i class="fas fa-eye" id="passwordToggleIcon"></i>
+                </button>
+            </div>
+            <span asp-validation-for="Password" class="login-error"></span>
+        </div>
+       
+        <div class="login-remember-forgot">
+            <div class="login-remember">
+                <input asp-for="RememberMe" type="checkbox" class="login-checkbox" />
+                <label class="login-remember-label">Remember Me</label>
+            </div>
+            <a asp-action="ForgotPassword" class="login-forgot-link1">Forgot Password?</a>
+        </div>
+
+        <div class="login-actions">
+            <button type="submit" class="login-button">Login</button>
+        </div>
+
+        <div class="login-remember-forgot1">
+            <p>Don't have an account? <a asp-action="Register" class="login-forgot-link1">Register</a></p>
+        </div>
+    </form>
+</div>
+<script>
+       function togglePasswordVisibility() {
+        const passwordField = document.getElementById('passwordField');
+        const toggleIcon = document.getElementById('passwordToggleIcon');
+
+        if (passwordField.type === 'password') {
+            passwordField.type = 'text';
+            toggleIcon.className = 'fas fa-eye-slash';
+        } else {
+            passwordField.type = 'password';
+            toggleIcon.className = 'fas fa-eye';
+        }
+    }
+</script>

@@ -1,0 +1,42 @@
+﻿@model IEnumerable<EMS.Models.UserActivityLog>
+
+@{
+    ViewData["Title"] = "User Recent Activities";
+}
+
+<div class="data-section">
+    <h2 class="data-title">Recent Activity</h2>
+
+    @if (Model != null && Model.Any())
+    {
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Accessed At</th>
+                    <th>URL</th>
+                    <th>Controller</th>
+                    <th>Action</th>
+                    <th>IP Address</th>
+                    <th>Device</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var activity in Model)
+                {
+                    <tr>
+                        <td>@activity.AccessedAt.ToString("g")</td>
+                        <td>@activity.UrlAccessed</td>
+                        <td>@activity.ControllerName</td>
+                        <td>@activity.ActionName</td>
+                        <td>@activity.IPAddress</td>
+                        <td>@activity.UserAgent</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+    else
+    {
+        <div class="data-empty">No recent activity records found.</div>
+    }
+</div>

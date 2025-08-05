@@ -1,0 +1,53 @@
+﻿@model IEnumerable<EMS.Models.LeaveRequest>
+
+@{
+    ViewData["Title"] = "My Leaves - This Month";
+}
+
+<div class="my-leaves-page">
+    <h2 class="leaves-heading">@ViewData["Title"]</h2>
+
+    @if (Model.Any())
+    {
+        <table class="table table-bordered table-striped leaves-table">
+            <thead class="table-header">
+                <tr>
+                    <th>From</th>
+                    <th>To</th>
+                    <th>Reason</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var leave in Model)
+                {
+                    <tr>
+                        <td>@leave.StartDate.ToShortDateString()</td>
+                        <td>@leave.EndDate.ToShortDateString()</td>
+                        <td>@leave.Reason</td>
+                        <td>
+                            @if (leave.Status == "Approved")
+                            {
+                                <span class="status-approved">Approved</span>
+                            }
+                            else if (leave.Status == "Rejected")
+                            {
+                                <span class="status-rejected">Rejected</span>
+                            }
+                            else
+                            {
+                                <span class="status-pending">Pending</span>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+    else
+    {
+        <div class="alert alert-info no-leaves-alert">
+            You have not applied for any leaves this month.
+        </div>
+    }
+</div>

@@ -1,0 +1,30 @@
+﻿@model IEnumerable<EMS.Models.Employee>
+
+<h2>Employees</h2>
+<a asp-action="Create" class="btn btn-primary mb-2">Add New</a>
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Phone</th>
+            <th>Role</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var emp in Model)
+        {
+            <tr>
+                <td>@emp.FullName</td>
+                <td>@emp.Email</td>
+                <td>@emp.PhoneNumber</td>
+                <td>@emp.Role</td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@emp.EmployeeId " class="btn btn-warning btn-sm">Edit</a>
+                    <a asp-action="Delete" asp-route-id="@emp.EmployeeId " class="btn btn-danger btn-sm">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

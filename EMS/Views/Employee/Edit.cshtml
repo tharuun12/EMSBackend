@@ -1,0 +1,72 @@
+﻿@model EMS.Models.Employee
+@{
+    var departments = ViewData["Departments"] as List<EMS.Models.Department>;
+}
+
+<div class="create-form">
+    <h2 class="form-title">Edit Employee</h2>
+
+    <form asp-action="Edit" method="post">
+        <input type="hidden" asp-for="EmployeeId" />
+
+        <div class="form-group">
+            <label asp-for="FullName" class="form-label"></label>
+            <input asp-for="FullName" class="form-control" />
+            <span asp-validation-for="FullName" class="form-error"></span>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="Email" class="form-label"></label>
+            <input asp-for="Email" class="form-control" />
+            <span asp-validation-for="Email" class="form-error"></span>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="PhoneNumber" class="form-label">Phone Number</label>
+            <input asp-for="PhoneNumber" class="form-control" />
+            <span asp-validation-for="PhoneNumber" class="form-error"></span>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="Role" class="form-label">Role</label>
+            <select asp-for="Role" class="form-control" asp-items="@(new SelectList(ViewBag.Roles))">
+                <option value="">-- Select Role --</option>
+            </select>
+            <span asp-validation-for="Role" class="form-error"></span>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="DepartmentId" class="form-label">Department</label>
+            <select asp-for="DepartmentId" class="form-control">
+                <option value="">-- Select Department --</option>
+                @foreach (var dept in departments!)
+                {
+                    <option value="@dept.DepartmentId" selected="@(Model.DepartmentId == dept.DepartmentId)">
+                        @dept.DepartmentName
+                    </option>
+                }
+            </select>
+            <span asp-validation-for="DepartmentId" class="form-error"></span>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="IsActive" class="form-label">Activity Status</label>
+            <select asp-for="IsActive" class="form-control">
+                <option value="true" selected="@Model.IsActive">Active</option>
+                <option value="false" selected="@(!Model.IsActive)">Not Active</option>
+            </select>
+            <span asp-validation-for="IsActive" class="form-error"></span>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="LeaveBalance" class="form-label">Update Leave Balance</label>
+            <input asp-for="LeaveBalance" class="form-control" />
+            <span asp-validation-for="LeaveBalance" class="form-error"></span>
+        </div>
+
+        <div class="form-actions">
+            <button type="submit" class="btn btn-success">Update</button>
+            <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+        </div>
+    </form>
+</div>

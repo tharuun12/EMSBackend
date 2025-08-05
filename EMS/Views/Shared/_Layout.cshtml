@@ -1,0 +1,184 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - EMS</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/EMS.styles.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/site.css" />
+    <link rel="stylesheet" href="~/css/toast.css" />
+
+
+</head>
+<body>
+    <script src="~/js/toast-handler.js"></script>
+
+    <header>
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+            <div class="container-fluid">
+                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">EMS</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+                        aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+                    <ul class="navbar-nav flex-grow-1">
+                        @using EMS.Web.Models
+                        @using Microsoft.AspNetCore.Identity
+                        @inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
+                        @{
+                            var employeeId = HttpContextAccessor.HttpContext.Session.GetInt32("EmployeeId");
+                        }
+                        @inject SignInManager<Users> SignInManager
+                        @inject UserManager<Users> UserManager
+
+                        @if (User?.Identity != null && User.Identity.IsAuthenticated)
+                        {
+
+                            @if (User.IsInRole("Admin"))
+                            {
+                                <!-- Profile Group -->
+                                <li class="nav-item dropdown">
+                                    <a class="nav-link dropdown-toggle text-dark" href="#" id="profileDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                        My Profile
+                                    </a>
+                                    <ul class="dropdown-menu" aria-labelledby="profileDropdown">
+                                        <li><a class="dropdown-item" asp-controller="Employee" asp-action="Index">View Profile</a></li>
+                                        <li><a class="dropdown-item" asp-controller="Account" asp-action="ChangePassword">Change Password</a></li>
+                                    </ul>
+                                </li>
+
+                                <!-- Dashboard Group -->
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-controller="Dashboard" asp-action="Index">Dashboard</a>
+                                </li>
+
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-controller="Employee" asp-action="EmployeeList">All Employees</a>
+                                </li>
+
+                                <!-- User Management Group -->
+                                <li class="nav-item dropdown">
+                                    <a class="nav-link dropdown-toggle text-dark" href="#" id="userMgmtDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                        User Management
+                                    </a>
+                                    <ul class="dropdown-menu" aria-labelledby="userMgmtDropdown">
+                                        <li><a class="dropdown-item" asp-controller="Employee" asp-action="ManagersList">Manage List</a></li>
+                                        <li><a class="dropdown-item" asp-controller="Employee" asp-action="Filter">Filter Employees</a></li>
+                                    </ul>
+                                </li>
+
+                                <!-- Department Group -->
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-controller="Department" asp-action="Index">Manage Departments</a>
+                                </li>
+
+                                <li class="nav-item"><a class="nav-link text-dark" asp-controller="Leave" asp-action="ApproveList">Leave Approvals</a></li>
+
+                                <!-- System Logs -->
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-controller="Activity" asp-action="Index">Activity Logs</a>
+                                </li>
+                            }
+
+
+                            @if (User.IsInRole("Employee"))
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-controller="Employee" asp-action="Index">Profile</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-controller="Leave" asp-action="Apply">Apply Leave</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark"
+                                       asp-controller="Leave"
+                                       asp-action="MyLeaves"
+                                       asp-route-employeeId="@employeeId">Leave History</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-controller="Account" asp-action="ChangePassword">Change Password</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-controller="Employee" asp-action="CurrentMonthInfo">Monthly Leave Report</a>
+                                </li>
+                            }
+
+                            @if (User.IsInRole("Manager"))
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-controller="Manager" asp-action="Index">My Profile</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-controller="Manager" asp-action="Subordinates">Team Members</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-controller="Leave" asp-action="EmployeeLeaveList">Leave Approvals</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-controller="Leave" asp-action="Apply">Apply for Leave</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark"
+                                       asp-controller="Leave"
+                                       asp-action="MyLeaves"
+                                       asp-route-employeeId="@employeeId">My Leave History</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-controller="Account" asp-action="ChangePassword">Change Password</a>
+                                </li>
+                            }
+                        }
+                    </ul>
+
+                    <ul class="navbar-nav">
+                        @if (User.Identity != null && User.Identity.IsAuthenticated)
+                        {
+                            <li class="nav-item">
+                                <span class="nav-link fw-bold text-primary">
+                                     @UserManager.GetUserAsync(User).Result?.FullName
+                                </span>
+                            </li>
+
+                            <li class="nav-item">
+                                <a href="#" class="nav-link text-dark" onclick="document.getElementById('logoutForm').submit(); return false;">Logout</a>
+                            </li>
+
+                            <form id="logoutForm" asp-controller="Account" asp-action="Logout" method="post" style="display: none;"></form>
+
+                        }
+                        else
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-controller="Account" asp-action="Login">Login</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-controller="Account" asp-action="Register">Register</a>
+                            </li>
+                        }
+                        
+                    </ul>                  
+                </div>
+            </div>
+        </nav>
+    </header>
+    <div class="container">
+        <main role="main" class="pb-3">
+            @RenderBody()
+        </main>
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+
+        <!-- Toast Notification Partial -->
+        @await Html.PartialAsync("_ToastNotification")
+    </div>
+    <footer class="border-top footer text-muted">
+    </footer>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

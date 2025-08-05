@@ -1,0 +1,17 @@
+﻿@using EMS.Web.Models
+@using Microsoft.AspNetCore.Identity
+@inject UserManager<Users> UserManager
+@inject SignInManager<Users> SignInManager
+
+@functions {
+    public Users CurrentUser => UserManager.GetUserAsync(User).GetAwaiter().GetResult();
+}
+
+@if (CurrentUser != null)
+{
+    <div>
+        <strong>Hello, @CurrentUser.FullName</strong><br />
+        Email: @CurrentUser.Email<br />
+        Phone: @CurrentUser.PhoneNumber<br />
+    </div>
+}

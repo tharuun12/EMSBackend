@@ -1,0 +1,44 @@
+﻿@model IEnumerable<EMS.Models.Department>
+
+@{
+    ViewData["Title"] = "Departments";
+}
+
+<div class="data-section">
+    <h2 class="data-title">Departments</h2>
+    <div class="d-flex justify-content-end mb-3">
+        <a class="btn btn-primary" asp-action="Create">Create New Department</a>
+    </div>
+
+    @if (Model != null && Model.Any())
+    {
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Manager</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@item.DepartmentId</td>
+                        <td>@item.DepartmentName</td>
+                        <td>@item.Manager?.FullName</td>
+                        <td>
+                            <a asp-action="Edit" asp-route-id="@item.DepartmentId" class="btn btn-sm btn-warning">Edit</a>
+                            <a asp-action="Delete" asp-route-id="@item.DepartmentId" class="btn btn-sm btn-danger">Delete</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+    else
+    {
+        <div class="data-empty">No departments found.</div>
+    }
+</div>
