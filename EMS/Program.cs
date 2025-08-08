@@ -1,17 +1,18 @@
 ﻿using EMS.Helpers;
+using EMS.Middleware;
 using EMS.Models;
 using EMS.Repositories.Implementations;
 using EMS.Services.Implementations;
 using EMS.Services.Interface;
 using EMS.Web.Data;
 using EMS.Web.Models;
-using EMS.Middleware;
 using Jose;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using System.Security.Claims;
 using System.Text;
 using System.Text.Json.Serialization;
 
@@ -75,7 +76,8 @@ builder.Services.AddAuthentication(options =>
         ValidIssuer = builder.Configuration["JwtSettings:Issuer"],
         ValidAudience = builder.Configuration["JwtSettings:Audience"],
         IssuerSigningKey = new SymmetricSecurityKey(
-            Encoding.UTF8.GetBytes(builder.Configuration["JwtSettings:Key"]))
+            Encoding.UTF8.GetBytes(builder.Configuration["JwtSettings:Key"])),
+        RoleClaimType = ClaimTypes.Role
     };
 });
 
@@ -110,7 +112,6 @@ using (var scope = app.Services.CreateScope())
     var services = scope.ServiceProvider;
     await RoleSeeder.SeedRolesAndAdmin(services); 
 }
-
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();

@@ -15,7 +15,7 @@ namespace EMS.Web.Controllers
             _roleManager = roleManager;
         }
 
-        // GET: api/role
+        // GET: /role
         [HttpGet]
         public async Task<IActionResult> Index()
         {

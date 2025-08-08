@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EMS.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250801065723_Cleared the DB and then now creating it again")]
-    partial class ClearedtheDBandthennowcreatingitagain
+    [Migration("20250806061919_initial migration")]
+    partial class initialmigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace EMS.Migrations
 {
     /// <inheritdoc />
-    public partial class FirstPush : Migration
+    public partial class initialmigration : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -58,7 +58,7 @@ namespace EMS.Migrations
                     DepartmentLogId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     DepartmentId = table.Column<int>(type: "int", nullable: false),
-                    DepartmentName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    DepartmentName = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     ManagerId = table.Column<int>(type: "int", nullable: true),
                     Operation = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     TimeStamp = table.Column<DateTime>(type: "datetime2", nullable: true)
@@ -75,10 +75,10 @@ namespace EMS.Migrations
                     EmployeeIdLog = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     EmployeeId = table.Column<int>(type: "int", nullable: false),
-                    FullName = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    PhoneNumber = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Role = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    FullName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Email = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    PhoneNumber = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Role = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     IsActive = table.Column<bool>(type: "bit", nullable: false),
                     RoleID = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     DepartmentId = table.Column<int>(type: "int", nullable: false),
@@ -99,12 +99,12 @@ namespace EMS.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    userId = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    userId = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     employeeId = table.Column<int>(type: "int", nullable: false),
                     LoginTime = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    IpAddress = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    IpAddress = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     IsSuccessful = table.Column<bool>(type: "bit", nullable: false),
-                    Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Email = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     LogoutTime = table.Column<DateTime>(type: "datetime2", nullable: true)
                 },
                 constraints: table =>
@@ -118,10 +118,10 @@ namespace EMS.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    UserId = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    UserName = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    ActivityType = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    UserId = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    UserName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ActivityType = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Timestamp = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
@@ -135,12 +135,12 @@ namespace EMS.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    UserId = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    UrlAccessed = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    ActionName = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    ControllerName = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    IPAddress = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    UserAgent = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    UserId = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    UrlAccessed = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ActionName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ControllerName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    IPAddress = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    UserAgent = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     AccessedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
