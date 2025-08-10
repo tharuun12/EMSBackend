@@ -1,5 +1,6 @@
 ﻿using EMS.Models;
 using EMS.Web.Data;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
@@ -19,6 +20,7 @@ namespace EMS.Web.ApiControllers
         }
 
         // GET: /Activity/employees
+        [Authorize(Roles = "Admin,Manager")]
         [HttpGet("employees")]
         public async Task<IActionResult> GetEmployees()
         {
@@ -27,6 +29,7 @@ namespace EMS.Web.ApiControllers
         }
 
         // GET: /Activity/login-history/{userId}
+        [Authorize(Roles = "Admin,Manager")]
         [HttpGet("login-history/{Id}")]
         public async Task<IActionResult> GetLoginHistory(int Id)
         {
@@ -48,6 +51,7 @@ namespace EMS.Web.ApiControllers
         }
 
         // GET: /Activity/recent-activity/{userId}
+        [Authorize(Roles = "Admin,Manager")]
         [HttpGet("recent-activity/")]
         public async Task<IActionResult> GetRecentActivity(int Id)
         {

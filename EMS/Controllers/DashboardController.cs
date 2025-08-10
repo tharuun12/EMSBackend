@@ -15,7 +15,7 @@ namespace EMS.Controllers
             _context = context;
         }
 
-        //[Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Index()
         {
             var totalEmployees = await _context.Employees.CountAsync();
@@ -40,20 +40,16 @@ namespace EMS.Controllers
                     EmployeeCount = d.Employees!.Count()
                 }).ToListAsync();
 
-            ViewBag.TotalEmployees = totalEmployees;
-            ViewBag.ActiveEmployees = activeEmployees;
-            ViewBag.TotalDepartments = totalDepartments;
-            ViewBag.RecentEmployees = recentEmployees;
-            ViewBag.DepartmentStats = departmentStats;
+            // Get current user's role (first role found)
+            var currentRole = User.Claims
+                .FirstOrDefault(c => c.Type == System.Security.Claims.ClaimTypes.Role)?.Value;
 
-            // Add leave data to ViewBag
-            ViewBag.TotalLeaveRequests = totalLeaveRequests;
-            ViewBag.ApprovedLeaves = approvedLeaves;
-            ViewBag.PendingLeaves = pendingLeaves;
-            ViewBag.RejectedLeaves = rejectedLeaves;
+            var currentUserName = User.Identity?.Name;
 
             var result = new
             {
+                currentUserName,
+                currentRole,
                 totalEmployees,
                 activeEmployees,
                 totalDepartments,
@@ -66,7 +62,6 @@ namespace EMS.Controllers
             };
 
             return Json(result);
-            //return View(departmentStats);
         }
     }
 }

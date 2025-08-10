@@ -63,7 +63,7 @@ namespace EMS.Web.Controllers
         }
 
         [HttpGet("approve-list")]
-        //[Authorize(Roles = "Manager")]
+        [Authorize(Roles = "Manager")]
         public async Task<IActionResult> GetPendingApprovals()
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
@@ -88,7 +88,7 @@ namespace EMS.Web.Controllers
         }
 
         [HttpGet("approvals/{id}")]
-        //[Authorize(Roles = "Manager")]
+        [Authorize(Roles = "Manager")]
         public async Task<IActionResult> GetApprovalDetails(int id)
         {
             var leave = await _context.LeaveRequests
@@ -102,7 +102,7 @@ namespace EMS.Web.Controllers
         }
 
         [HttpPost("approvals/{id}")]
-        //[Authorize(Roles = "Manager")]
+        [Authorize(Roles = "Manager")]
         public async Task<IActionResult> ApproveOrRejectLeave(int id, [FromQuery] string status)
         {
             var leave = await _context.LeaveRequests.FindAsync(id);
@@ -135,7 +135,7 @@ namespace EMS.Web.Controllers
         }
 
         [HttpGet("subordinates")]
-        //[Authorize(Roles = "Manager")]
+        [Authorize(Roles = "Manager")]
         public async Task<IActionResult> GetSubordinates(int id)
         {
             var user = await _context.Employees.FirstOrDefaultAsync(e => e.EmployeeId == id);

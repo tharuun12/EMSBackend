@@ -1,5 +1,6 @@
 ﻿using EMS.Models;
 using EMS.Web.Data;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
@@ -73,6 +74,7 @@ namespace EMS.Web.Controllers
             return true;
         }
 
+        [Authorize]
         [HttpPost("apply")]
         public async Task<IActionResult> Apply([FromBody] LeaveRequest leave)
         {
@@ -110,6 +112,7 @@ namespace EMS.Web.Controllers
             return Ok("Leave application submitted successfully.");
         }
 
+        [Authorize]
         [HttpGet("my/{employeeId}")]
         public async Task<IActionResult> MyLeaves(int employeeId)
         {
@@ -122,6 +125,7 @@ namespace EMS.Web.Controllers
             return Ok(leaves);
         }
 
+        [Authorize(Roles = "Admin,Manager")]
         [HttpGet("pending")]
         public async Task<IActionResult> ApproveList()
         {
@@ -133,10 +137,19 @@ namespace EMS.Web.Controllers
             return Ok(leaves);
         }
 
-        [HttpGet("team-pending")]
-        public async Task<IActionResult> EmployeeLeaveList()
+        [Authorize(Roles = "Admin,Manager")]
+        [HttpGet("manager-leave-approval")]
+        public async Task<IActionResult> EmployeeLeaveList(int employeeId)
         {
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            
+            var userId = await _context.Employees
+                .Where(e => e.EmployeeId == employeeId)
+                .Select(e => e.UserId)
+                .FirstOrDefaultAsync();
+
+            if (userId == null)
+                return NotFound("UserId not found for the given EmployeeId.");           
+
             var manager = await _context.Employees.FirstOrDefaultAsync(e => e.UserId == userId);
             if (manager == null) return NotFound("Manager not found.");
 
@@ -153,6 +166,7 @@ namespace EMS.Web.Controllers
             return Ok(leaves);
         }
 
+        [Authorize(Roles = "Admin,Manager")]
         [HttpGet("{id}")]
         public async Task<IActionResult> GetLeave(int id)
         {
@@ -164,6 +178,7 @@ namespace EMS.Web.Controllers
             return Ok(leave);
         }
 
+        [Authorize(Roles = "Admin,Manager")]
         [HttpPost("approved/{id}")]
         public async Task<IActionResult> ApproveLeave(int id, [FromBody] ApproveLeaveRequest request)
         {

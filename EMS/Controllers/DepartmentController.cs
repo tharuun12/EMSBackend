@@ -21,6 +21,7 @@ namespace EMS.Web.Controllers
         }
 
         // GET: 
+        [Authorize(Roles = "Admin,Manager")]
         [HttpGet]
         public async Task<IActionResult> Index()
         {
@@ -31,7 +32,9 @@ namespace EMS.Web.Controllers
         }
 
         // GET: create
+        [Authorize(Roles = "Admin,Manager")]
         [HttpGet("create")]
+        [Authorize(Roles = "Admin, admin")]
         public IActionResult Create()
         {
             var departmentList = _context.Department.ToList();
@@ -39,6 +42,7 @@ namespace EMS.Web.Controllers
         }
 
         // POST: create
+        [Authorize(Roles = "Admin,Manager")]
         [HttpPost("create")]
         public async Task<IActionResult> CreateDepartment([FromBody] Department department)
         {
@@ -99,6 +103,7 @@ namespace EMS.Web.Controllers
         }
 
         // GET: edit/5
+        [Authorize(Roles = "Admin,Manager")]
         [HttpGet("edit/{id}")]
         public async Task<IActionResult> Edit(int id)
         {
@@ -110,6 +115,7 @@ namespace EMS.Web.Controllers
         }
 
         // PUT: api/department/edit/5
+        [Authorize(Roles = "Admin,Manager")]
         [HttpPut("edit/{id}")]
         public async Task<IActionResult> Edit(int id, [FromBody] Department department)
         {
@@ -227,6 +233,7 @@ namespace EMS.Web.Controllers
         }
 
         // GET: api/department/delete/5
+        [Authorize(Roles = "Admin,Manager")]
         [HttpGet("delete/{id}")]
         public async Task<IActionResult> Delete(int id)
         {
@@ -241,6 +248,7 @@ namespace EMS.Web.Controllers
         }
 
         // DELETE: /department/delete/5
+        [Authorize(Roles = "Admin,Manager")]
         [HttpDelete("delete/{id}")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {

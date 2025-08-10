@@ -30,6 +30,7 @@ namespace EMS.Web.Controllers
         }
 
         // GET: /employees
+        [Authorize(Roles = "Admin,Manager")]
         [HttpGet]
         public async Task<IActionResult> EmployeeList()
         {
@@ -40,6 +41,7 @@ namespace EMS.Web.Controllers
         }
 
         // GET: /employees/create
+        [Authorize(Roles = "Admin,Manager")]
         [HttpGet("create")]
         public async Task<IActionResult> Create()
         {
@@ -50,6 +52,7 @@ namespace EMS.Web.Controllers
         }
 
         // POST: /employees/create
+        [Authorize(Roles = "Admin,Manager")]
         [HttpPost("create")]
         public async Task<IActionResult> Create([FromBody] EmployeeViewModel model)
         {
@@ -139,6 +142,7 @@ namespace EMS.Web.Controllers
         }
 
         // GET: /employees/edit/5
+        [Authorize(Roles = "Admin,Manager")]
         [HttpGet("edit/{id}")]
         public async Task<IActionResult> Edit(int id)
         {
@@ -150,6 +154,7 @@ namespace EMS.Web.Controllers
         }
 
         // PUT: /employees/edit/5
+        [Authorize(Roles = "Admin,Manager")]
         [HttpPut("edit/{id}")]
         public async Task<IActionResult> Edit(int id, [FromBody] Employee employee)
         {
@@ -320,6 +325,7 @@ namespace EMS.Web.Controllers
         }
 
         // GET: api/employee/delete/5
+        [Authorize(Roles = "Admin")]
         [HttpGet("delete/{id}")]
         public async Task<IActionResult> Delete(int id)
         {
@@ -331,6 +337,7 @@ namespace EMS.Web.Controllers
         }
 
         // DELETE: api/employee/delete/5
+        [Authorize(Roles = "Admin")]
         [HttpDelete("delete/{id}")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
@@ -388,6 +395,7 @@ namespace EMS.Web.Controllers
         }
 
         // GET: api/employee/filter?departmentId=1&role=Manager
+        [Authorize(Roles = "Admin")]
         [HttpGet("filter")]
         public async Task<IActionResult> Filter(int? departmentId, string? role)
         {
@@ -399,6 +407,7 @@ namespace EMS.Web.Controllers
         }
 
         // GET: api/employee/my-leaves
+        [Authorize]
         [HttpGet("my-leaves")]
         public async Task<IActionResult> MyLeaves(string employeeId)
         {
@@ -419,6 +428,7 @@ namespace EMS.Web.Controllers
         }
 
         // GET: /employees/managers
+        [Authorize]
         [HttpGet("managers")]
         public async Task<IActionResult> ManagersList()
         {
@@ -441,6 +451,7 @@ namespace EMS.Web.Controllers
         }
 
         // GET: /employees/current-month-info
+        [Authorize]
         [HttpGet("current-month-info")]
         public async Task<IActionResult> CurrentMonthInfo(int id)
         {
@@ -482,6 +493,8 @@ namespace EMS.Web.Controllers
         }
 
         // GET: /employees/profile
+        [Authorize]
+
         [HttpGet("profile")]
         public async Task<IActionResult> Profile(int id)
         {

@@ -5,6 +5,7 @@ using EMS.Web.Data;
 using EMS.Web.Models;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -101,14 +102,21 @@ namespace EMS.Web.Controllers
                 new Claim(ClaimTypes.Name, user.UserName),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
                 new Claim(ClaimTypes.NameIdentifier, user.Id)
+                //new Claim(ClaimTypes.NameIdentifier)
             };
-            claims.AddRange(roles.Select(r => new Claim(ClaimTypes.Role, r)));
+
+            foreach (var role in roles)
+            {
+                claims.Add(new Claim(ClaimTypes.Role, role)); 
+            }
+            //claims.AddRange(roles.Select(r => new Claim(ClaimTypes.Role, r)));
 
             var token = new JwtSecurityToken(
                 issuer: _config["JwtSettings:Issuer"],
                 audience: _config["JwtSettings:Audience"],
-                expires: DateTime.UtcNow.AddMinutes(60),
                 claims: claims,
+                expires: DateTime.UtcNow.AddMinutes(60),
+       
                 signingCredentials: new SigningCredentials(
                     new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["JwtSettings:Key"])),
                     SecurityAlgorithms.HmacSha256
@@ -212,6 +220,8 @@ namespace EMS.Web.Controllers
         }
 
         [HttpPost("change-password")]
+        [Authorize]
+
         public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordViewModel model)
         {
             var user = await _userManager.FindByEmailAsync(model.Email);

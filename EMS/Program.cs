@@ -12,12 +12,15 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using System.IO;
+using System.Net.Http;
+
 using System.Security.Claims;
 using System.Text;
 using System.Text.Json.Serialization;
 
-
 var builder = WebApplication.CreateBuilder(args);
+
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowReactApp",
@@ -28,6 +31,7 @@ builder.Services.AddCors(options =>
                   .AllowAnyMethod();
         });
 });
+
 // Database
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
@@ -35,7 +39,6 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 builder.Services.AddIdentity<Users, IdentityRole>()
     .AddEntityFrameworkStores<AppDbContext>()
     .AddDefaultTokenProviders();
-
 
 // Email service
 builder.Services.Configure<EmailSettings>(
@@ -45,6 +48,7 @@ builder.Services.AddScoped<IEmailService, EmailService>();
 // JWT Auth
 var jwtSettings = builder.Configuration.GetSection("JwtSettings");
 builder.Services.Configure<JwtSettings>(jwtSettings);
+
 // Configure JSON serialization to handle cycles
 builder.Services.AddControllersWithViews(options =>
 {
@@ -60,7 +64,7 @@ builder.Services.AddControllersWithViews(options =>
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-    options.DefaultChallengeScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
 })
 .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme) 
 .AddJwtBearer(options =>
@@ -82,12 +86,13 @@ builder.Services.AddAuthentication(options =>
 });
 
 builder.Services.AddHttpContextAccessor();
-builder.Services.AddScoped<LogUserActivityFilter>();
 
+builder.Services.AddScoped<LogUserActivityFilter>();
 
 builder.Services.AddScoped<IUserActivityService, UserActivityService>();
 
 builder.Services.AddControllersWithViews();
+
 builder.Services.AddSession(options =>
 {
     options.IdleTimeout = TimeSpan.FromMinutes(30); 
@@ -96,11 +101,38 @@ builder.Services.AddSession(options =>
 });
 
 builder.Services.AddAuthorization();
+
 builder.Services.AddRazorPages();
 
+// ✅ Add all services here before builder.Build()
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
+
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI();
+}
+
+// ✅ Save swagger.json after app starts
+app.Lifetime.ApplicationStarted.Register(() =>
+{
+    var client = new HttpClient();
+    var swaggerJson = client.GetStringAsync($"{app.Urls.First()}/swagger/v1/swagger.json").Result;
+
+    var folderPath = @"C:\Users\tharuun.m\source\repos\BackendEMS\EMS\Views\Shared";
+    if (!Directory.Exists(folderPath))
+        Directory.CreateDirectory(folderPath);
+
+    var filePath = Path.Combine(folderPath, "swagger.json");
+    File.WriteAllText(filePath, swaggerJson);
+
+    Console.WriteLine($"Swagger JSON saved to: {filePath}");
+});
 app.UseCors("AllowReactApp");
+
 using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
@@ -113,12 +145,19 @@ using (var scope = app.Services.CreateScope())
     await RoleSeeder.SeedRolesAndAdmin(services); 
 }
 app.UseHttpsRedirection();
+
 app.UseStaticFiles();
+
 app.UseRouting();
+
 app.UseAuthentication();
+
 app.UseAuthorization();
+
 app.UseSession(); 
+
 app.MapDefaultControllerRoute();
+
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
