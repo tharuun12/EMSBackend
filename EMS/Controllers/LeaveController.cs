@@ -32,10 +32,18 @@ namespace EMS.Web.Controllers
             return days;
         }
 
-        private async Task<LeaveBalance?> EnsureLeaveBalanceExistsAsync(int employeeId)
+        public async Task<LeaveBalance?> EnsureLeaveBalanceExistsAsync(int employeeId, int leaveBalance)
         {
             var balance = await _context.LeaveBalances.FirstOrDefaultAsync(x => x.EmployeeId == employeeId);
-            if (balance != null) return balance;
+            if (balance != null)
+            {
+                var remainingLeave = balance.TotalLeaves - balance.LeavesTaken;
+                if (remainingLeave >= leaveBalance)
+                {
+                    return balance;
+                }
+                return null;
+            }
 
             var emp = await _context.Employees.FindAsync(employeeId);
             if (emp == null) return null;
@@ -53,21 +61,21 @@ namespace EMS.Web.Controllers
             return newBalance;
         }
 
-        private async Task<bool> UpdateLeaveBalanceAsync(int employeeId, DateTime start, DateTime end)
+        private async Task<bool> UpdateLeaveBalanceAsync(int employeeId, DateTime start, DateTime end, int LeaveRequested)
         {
             int days = CalculateBusinessDays(start, end);
             if (days <= 0) return false;
 
-            var leaveBalance = await EnsureLeaveBalanceExistsAsync(employeeId);
+            var leaveBalance = await EnsureLeaveBalanceExistsAsync(employeeId, LeaveRequested);
             var employee = await _context.Employees.FindAsync(employeeId);
 
             if (leaveBalance == null || employee == null || employee.LeaveBalance < days)
                 return false;
 
             leaveBalance.LeavesTaken += days;
-            employee.LeaveBalance = Math.Max(0, employee.LeaveBalance - days);
+            //employee.LeaveBalance = Math.Max(0, employee.LeaveBalance - days);
+            //_context.LeaveBalances.Update(leaveBalance);
 
-            _context.LeaveBalances.Update(leaveBalance);
             _context.Employees.Update(employee);
             await _context.SaveChangesAsync();
 
@@ -89,20 +97,30 @@ namespace EMS.Web.Controllers
             if (employee == null)
                 return NotFound("Employee not found.");
 
-            if (employee.LeaveBalance < daysRequested)
-                return BadRequest($"Insufficient leave balance. Available: {employee.LeaveBalance}, Requested: {daysRequested}");
+            //if (employee.LeaveBalance < daysRequested)
+            //    return BadRequest($"Insufficient leave balance. Available: {employee.LeaveBalance}, Requested: {daysRequested}");
 
             leave.RequestDate = DateTime.UtcNow;
             leave.Status = string.IsNullOrEmpty(leave.Status) || leave.Status != "Approved" ? "Pending" : "Approved";
+            var checkBalance = await EnsureLeaveBalanceExistsAsync(leave.EmployeeId, daysRequested);
+            if (checkBalance == null)
+            {
+                var balance = await _context.LeaveBalances.FirstOrDefaultAsync(x => x.EmployeeId == leave.EmployeeId);
+                var balanceLeave = balance?.TotalLeaves - balance?.LeavesTaken;
+                if (balanceLeave < 0)
+                {
+                    balanceLeave = 0;
+                }
+                return BadRequest(new { message = $"Insufficient balance. Available leave: {balanceLeave}, Requested leave: {daysRequested}" });
+            }
 
             _context.LeaveRequests.Add(leave);
             await _context.SaveChangesAsync();
 
-            await EnsureLeaveBalanceExistsAsync(leave.EmployeeId);
 
             if (leave.Status == "Approved")
             {
-                var updated = await UpdateLeaveBalanceAsync(leave.EmployeeId, leave.StartDate, leave.EndDate);
+                var updated = await UpdateLeaveBalanceAsync(leave.EmployeeId, leave.StartDate, leave.EndDate, daysRequested);
                 if (!updated)
                     return StatusCode(500, "Failed to update leave balance.");
 
@@ -190,18 +208,30 @@ namespace EMS.Web.Controllers
 
             string originalStatus = leave.Status;
 
-            if (request.Status == "Approved" && originalStatus != "Approved")
+            if (request.Status == "approved" && originalStatus != "Approved")
             {
                 int daysRequested = CalculateBusinessDays(leave.StartDate, leave.EndDate);
                 var employee = await _context.Employees.FindAsync(leave.EmployeeId);
                 if (employee == null)
                     return NotFound("Employee not found.");
 
-                if (employee.LeaveBalance < daysRequested)
-                    return BadRequest($"Insufficient balance. Available: {employee.LeaveBalance}, Requested: {daysRequested}");
+                //if (employee.LeaveBalance < daysRequested)
+                //    return BadRequest($"Insufficient balance. Available: {employee.LeaveBalance}, Requested: {daysRequested}");
 
-                await EnsureLeaveBalanceExistsAsync(leave.EmployeeId);
-                var success = await UpdateLeaveBalanceAsync(leave.EmployeeId, leave.StartDate, leave.EndDate);
+                var checkLeave = await EnsureLeaveBalanceExistsAsync(leave.EmployeeId, daysRequested);
+                if (checkLeave == null)
+                {
+                    var balance = await _context.LeaveBalances.FirstOrDefaultAsync(x => x.EmployeeId == leave.EmployeeId);
+                    var balanceLeave = balance?.TotalLeaves - balance?.LeavesTaken;
+                    if (balanceLeave < 0)
+                    {
+                        balanceLeave = 0;
+                    }
+
+                    return BadRequest(new { message = $"Insufficient balance. Available: {balance?.TotalLeaves- balance?.LeavesTaken}, Requested: {daysRequested}" });
+                }
+
+                var success = await UpdateLeaveBalanceAsync(leave.EmployeeId, leave.StartDate, leave.EndDate, daysRequested);
 
                 if (!success)
                     return StatusCode(500, "Failed to update leave balance.");

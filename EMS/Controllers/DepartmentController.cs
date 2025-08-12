@@ -21,7 +21,7 @@ namespace EMS.Web.Controllers
         }
 
         // GET: 
-        [Authorize(Roles = "Admin,Manager")]
+        //[Authorize(Roles = "Admin,Manager")]
         [HttpGet]
         public async Task<IActionResult> Index()
         {
@@ -34,7 +34,6 @@ namespace EMS.Web.Controllers
         // GET: create
         [Authorize(Roles = "Admin,Manager")]
         [HttpGet("create")]
-        [Authorize(Roles = "Admin, admin")]
         public IActionResult Create()
         {
             var departmentList = _context.Department.ToList();

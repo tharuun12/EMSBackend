@@ -63,7 +63,7 @@ namespace EMS.Web.Controllers
 
             var result = await _userManager.CreateAsync(user, model.Password);
             if (!result.Succeeded)
-                return BadRequest(new { errors = result.Errors.Select(e => e.Description) });
+                return BadRequest(new {message = result.Errors.Select(e => e.Description)});
 
             var loginLog = new LoginActivityLogs
             {
@@ -216,12 +216,11 @@ namespace EMS.Web.Controllers
             if (result.Succeeded)
                 return Ok(new { message = "Password reset successfully." });
 
-            return BadRequest(new { errors = result.Errors.Select(e => e.Description) });
+            return BadRequest(new { message = result.Errors.Select(e => e.Description) });
         }
 
         [HttpPost("change-password")]
         [Authorize]
-
         public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordViewModel model)
         {
             var user = await _userManager.FindByEmailAsync(model.Email);
@@ -232,7 +231,7 @@ namespace EMS.Web.Controllers
             if (result.Succeeded)
                 return Ok(new { message = "Password changed successfully." });
 
-            return BadRequest(new { errors = result.Errors.Select(e => e.Description) });
+            return BadRequest(new { message = result.Errors.Select(e => e.Description) });
         }
 
         [HttpPost("logout")]

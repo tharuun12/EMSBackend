@@ -1,5 +1,4 @@
 ﻿using EMS.Helpers;
-using EMS.Middleware;
 using EMS.Models;
 using EMS.Repositories.Implementations;
 using EMS.Services.Implementations;
@@ -12,9 +11,6 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-using System.IO;
-using System.Net.Http;
-
 using System.Security.Claims;
 using System.Text;
 using System.Text.Json.Serialization;
@@ -116,21 +112,21 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-// ✅ Save swagger.json after app starts
-app.Lifetime.ApplicationStarted.Register(() =>
-{
-    var client = new HttpClient();
-    var swaggerJson = client.GetStringAsync($"{app.Urls.First()}/swagger/v1/swagger.json").Result;
+//// Save swagger.json after app starts
+//app.Lifetime.ApplicationStarted.Register(() =>
+//{
+//    var client = new HttpClient();
+//    var swaggerJson = client.GetStringAsync($"{app.Urls.First()}/swagger/v1/swagger.json").Result;
 
-    var folderPath = @"C:\Users\tharuun.m\source\repos\BackendEMS\EMS\Views\Shared";
-    if (!Directory.Exists(folderPath))
-        Directory.CreateDirectory(folderPath);
+//    var folderPath = @"C:\Users\tharuun.m\source\repos\BackendEMS\EMS\Views\Shared";
+//    if (!Directory.Exists(folderPath))
+//        Directory.CreateDirectory(folderPath);
 
-    var filePath = Path.Combine(folderPath, "swagger.json");
-    File.WriteAllText(filePath, swaggerJson);
+//    var filePath = Path.Combine(folderPath, "swagger.json");
+//    File.WriteAllText(filePath, swaggerJson);
 
-    Console.WriteLine($"Swagger JSON saved to: {filePath}");
-});
+//    Console.WriteLine($"Swagger JSON saved to: {filePath}");
+//});
 app.UseCors("AllowReactApp");
 
 using (var scope = app.Services.CreateScope())
@@ -153,6 +149,9 @@ app.UseRouting();
 app.UseAuthentication();
 
 app.UseAuthorization();
+
+// ✅ Global Unauthorized / Forbidden handler
+app.UseStatusCodePages(ErrorResponseHelper.HandleUnauthorizedAndForbidden);
 
 app.UseSession(); 
 

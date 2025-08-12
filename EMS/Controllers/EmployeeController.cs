@@ -213,7 +213,7 @@ namespace EMS.Web.Controllers
                 var lb = await _context.LeaveBalances.FirstOrDefaultAsync(l => l.EmployeeId == id);
                 if (lb != null)
                 {
-                    lb.TotalLeaves = employee.LeaveBalance + lb.TotalLeaves;
+                    lb.TotalLeaves = employee.LeaveBalance;
                     _context.LeaveBalances.Update(lb);
                     await _context.SaveChangesAsync();
                 }
